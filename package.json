@@ -1,0 +1,33 @@
+{
+  "name": "ifba-server",
+  "version": "1.0.0",
+  "description": "ifba-server",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "knex migrate:latest && mocha --exit ./test/index.test.js",
+    "start": "server/index.js",
+    "start-dev": "nodemon server/index.js",
+    "local": "./node_modules/.bin/nodemon --ignore public/",
+    "knex": "./node_modules/.bin/knex"
+  },
+  "keywords": [],
+  "author": "Ian Duke",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "knex": "^0.15.2",
+    "knex-logger": "^0.1.0",
+    "morgan": "^1.9.1",
+    "pg": "^7.4.3"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.4"
+  }
+}

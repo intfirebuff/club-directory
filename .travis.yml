@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - '8'
+  - '10'
+services:
+  - postgresql
+env:
+  - NODE_ENV=test
+before_install:
+  - npm i -g npm
+  - npm i -g yarn
+before_script:
+  - cp .env.travis .env
+  - psql -c 'create database ifba_test;' -U postgres
+notifications:
+  email: false
