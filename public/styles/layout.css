@@ -1,0 +1,29 @@
+#clubList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+}
+
+.club {
+    margin: 10px;
+    font-size: 16px;
+}
+
+.contact {
+    font-size: 15px;
+}
+
+.social {
+    display: flex;
+    flex-direction: row;
+}
+
+.fab {
+    font-size: 25px;
+    margin-right: 12px;
+}
+
+.shadow {
+    box-shadow: 5px 5px 5px rgb(194, 194, 194);
+    -moz-box-shadow: 5px 5px 5px rgb(194, 194, 194);
+    -webkit-box-shadow: 5px 5px 5px rgb(194, 194, 194);
+} 
