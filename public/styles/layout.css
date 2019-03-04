@@ -1,3 +1,7 @@
+#regionSelect {
+    width: 150px;
+}
+
 #clubList {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -6,6 +10,12 @@
 .club {
     margin: 10px;
     font-size: 16px;
+}
+
+.shadow {
+    box-shadow: 5px 5px 5px rgb(194, 194, 194);
+    -moz-box-shadow: 5px 5px 5px rgb(194, 194, 194);
+    -webkit-box-shadow: 5px 5px 5px rgb(194, 194, 194);
 }
 
 .contact {
@@ -22,8 +32,6 @@
     margin-right: 12px;
 }
 
-.shadow {
-    box-shadow: 5px 5px 5px rgb(194, 194, 194);
-    -moz-box-shadow: 5px 5px 5px rgb(194, 194, 194);
-    -webkit-box-shadow: 5px 5px 5px rgb(194, 194, 194);
-} 
+.btn {
+    margin-top: 7px;
+}
