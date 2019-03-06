@@ -2,17 +2,19 @@ $(document).ready(function () {
 
     let allClubsFetched = false;
     let allClubs = null;
+    let dataObj = null;
 
     $("#regionSelect").on("change", function() {
         const allClubsOption = "A";
-        let opt = $(this).find('option:selected')[0];
 
+        let opt = $(this).find('option:selected')[0]; 
         if (!opt.value) {
+            // return early if placeholder text
             return;
         }
 
         if (allClubsFetched) {
-            // avoid unneccesary API call; use previously fetched data
+            // check if data has been cached
             if (opt.value == allClubsOption) {
                 return renderClubs(allClubs);
             } else {
@@ -21,14 +23,14 @@ $(document).ready(function () {
         }
 
         if (opt.value == allClubsOption) {
-            return loadAllClubs(renderClubs)
+            return fetchAllClubs(renderClubs)
         } else {
-            return loadClubsByRegion(opt.value, renderClubs);
+            return fetchClubsByRegion(opt.value, renderClubs);
         }
     });
 
-    // fetches clubs from http://localhost:8080/api/club/all
-    const loadAllClubs = (cb) => {
+    // fetch clubs from /api/club/all
+    const fetchAllClubs = (cb) => {
         $.getJSON({
             url: '/api/club/all',
             success: (response) => {
@@ -36,27 +38,46 @@ $(document).ready(function () {
                 allClubsFetched = true;
                 cb(response);
             },
-            fail: handleError('loadAllClubs')
+            fail: handleError('fetchAllClubs')
         })
     }
 
-    const loadClubsByRegion = (region, cb) => {
+    // fetch clubs from /api/region/:id
+    const fetchClubsByRegion = (region, cb) => {
         $.getJSON({
             url: `/api/region/${region}`,
             success: (response) => {
                 cb(response);
             },
-            fail: handleError('loadClubsByRegion')
+            fail: handleError('fetchClubsByRegion')
         })
     }
 
-    // renders all active clubs in DB and injects to page
+    // fetch club officers from /api/officers/:id
+    const fetchOfficers = (id, cb) => {
+        $.getJSON({
+            url: `/api/officers/${id}`,
+            success: (response) => {
+                cb(response);
+            },
+            fail: handleError('fetchOfficers')
+        })
+    }
+
     const renderClubs = (data) => {
-        const clubs = data.map((club) => {
-            return generateHtmlString(club);
+        dataObj = data;
+        const clubs = data.map((club, i) => {
+            return generateClubCardHtml(club, i);
         })
         $("#clubList").html('');
         $("#clubList").prepend(clubs.join(''));
+    }
+
+    const renderOfficers = (data) => {
+        let officers = data.map((officer, i) => {
+            return generateOfficerHtml(officer, i);
+        })
+        $(".modal-officers").prepend(officers.join(''));
     }
 
     const handleError = (method) => {
@@ -65,9 +86,8 @@ $(document).ready(function () {
       }
     }
 
-    const generateHtmlString = (club) => {
+    const generateClubCardHtml = (club, i) => {
         let { name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
-        let mapString = `${address_2},+${city},+${state_code}+${zip}+${country}`;
         return `
           <div class="card club shadow">
             <h5 class="card-header">${name}</h5>
@@ -82,19 +102,36 @@ $(document).ready(function () {
                 <p class="contact">
                     ${email ? `<a href="mailto:${email}">${email}</a>` : ''}
                     ${email && website ? `<br>` : ''}
-                    ${website ? `<a href="${website}">${website}</a>` : ''}
+                    ${website ? `<a href="${website}" target="_blank">${website}</a>` : ''}
                 </p>
                 <div class="social">
-                    ${facebook_url ? `<a href="${facebook_url}"><i class="fab fa-facebook-square"></i></a>` : ''}
-                    ${twitter_handle ? `<a href="https://twitter.com/${twitter_handle}"><i class="fab fa-twitter-square"></i></a>` : ''}
-                    ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}"><i class="fab fa-instagram"></i></a>` : ''}
+                    ${facebook_url ? `<a href="${facebook_url}" target="_blank"><i class="fab fa-facebook-square"></i></a>` : ''}
+                    ${twitter_handle ? `<a href="https://twitter.com/${twitter_handle}" target="_blank"><i class="fab fa-twitter-square"></i></a>` : ''}
+                    ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
                 </div>
-                <!-- <a href="#" class="btn btn-secondary">More Info</a> -->
-            </div>
-            <div class="mapbox">
-               <!-- ${generateMapString(mapString)} -->
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-index="${i}" data-target="#modal">More Info</button>
             </div>
           </div>`;
+    }
+
+    const generateOfficerHtml = (officer) => {
+        return `
+            <table class="table" style="margin-bottom: 0;">
+            <tr>
+                <td style="width: 25%;">${officer.name}</td>
+                <td style="width: 25%;">${officer.position}</td>
+                <td style="width: 25%;">${officer.phone_1 ? `${officer.phone_1}` : ''}</td>
+                <td style="width: 25%;">${officer.email_1 ? `${officer.email_1}` : ''}</td>
+            </tr>
+            </table>
+            ${officer.address_2
+                ? `<p style="margin-left: 10px;">
+                        ${officer.address_2}<br>
+                        ${officer.city}, ${officer.state_code}<br>
+                        ${officer.zip}
+                    </p>`
+                   : ''
+            }`;
     }
 
     generateMapString = (address) => {
@@ -111,4 +148,22 @@ $(document).ready(function () {
                 src="https://www.google.com/maps/embed/v1/search?q=${address}" allowfullscreen>
             </iframe>`;
     }
-}); 
+
+    $('#modal').on('show.bs.modal', function (event) {
+        let i = $(event.relatedTarget).data('index');
+        let club = dataObj[i];
+        let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
+        let mapString = `${address_2},+${city},+${state_code}+${zip}+${country}`;
+        $('.modal-title').text(name + ` (Region ${dataObj[i].region})`);
+        $('.modal-body').html(`
+            <div class="mapbox">
+                ${generateMapString(mapString)}
+            </div>
+            <div class="modal-officers">
+                <!-- officer list is injected here -->
+            </div>
+            `
+        );
+        fetchOfficers(id, renderOfficers);
+      })
+});
