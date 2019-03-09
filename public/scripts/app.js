@@ -125,7 +125,7 @@ $(document).ready(function () {
             </tr>
             </table>
             ${officer.address_2
-                ? `<p style="margin-left: 10px;">
+                ? `<p style="margin-left: 10px; margin-top: -10px;">
                         ${officer.address_2}<br>
                         ${officer.city}, ${officer.state_code}<br>
                         ${officer.zip}
@@ -156,6 +156,24 @@ $(document).ready(function () {
         let mapString = `${address_2},+${city},+${state_code}+${zip}+${country}`;
         $('.modal-title').text(name + ` (Region ${dataObj[i].region})`);
         $('.modal-body').html(`
+            <div style="margin-left: 10px;">
+                <p>
+                    ${address_1 ? `${address_1}<br>` : ''}
+                    ${address_2}<br>
+                    ${city}, ${state_code} ${zip}<br>
+                    ${country}
+                </p>
+                <p class="contact">
+                    ${email ? `<a href="mailto:${email}">${email}</a>` : ''}
+                    ${email && website ? `<br>` : ''}
+                    ${website ? `<a href="${website}" target="_blank">${website}</a>` : ''}
+                </p>
+                <div class="social">
+                    ${facebook_url ? `<a href="${facebook_url}" target="_blank"><i class="fab fa-facebook-square"></i></a>` : ''}
+                    ${twitter_handle ? `<a href="https://twitter.com/${twitter_handle}" target="_blank"><i class="fab fa-twitter-square"></i></a>` : ''}
+                    ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
+                </div>
+            </div>
             <div class="mapbox">
                 ${generateMapString(mapString)}
             </div>
