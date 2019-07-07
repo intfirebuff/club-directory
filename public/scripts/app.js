@@ -74,9 +74,16 @@ $(document).ready(function () {
     }
 
     const renderOfficers = (data) => {
-        let officers = data.map((officer, i) => {
-            return generateOfficerHtml(officer, i);
-        })
+        let officers = [];
+        if ($(window).width() < 992) {
+            officers = data.map((officer, i) => {
+                return generateMobileOfficerHtml(officer, i);
+            })
+        } else {
+            officers = data.map((officer, i) => {
+                return generateOfficerHtml(officer, i);
+            })
+        }
         $(".modal-officers").prepend(officers.join(''));
     }
 
@@ -118,7 +125,6 @@ $(document).ready(function () {
         return `
             <table class="table" style="margin-bottom: 0;">
             <tr>
-                <!-- MAKE RESPONSIVE -->
                 <td style="width: 25%;">${officer.name}</td>
                 <td style="width: 25%;">${officer.position}</td>
                 <td style="width: 25%;">${officer.phone_1 ? `${officer.phone_1}` : ''}</td>
@@ -133,6 +139,25 @@ $(document).ready(function () {
                     </p>`
                    : ''
             }`;
+    }
+
+    const generateMobileOfficerHtml = (officer) => {
+        return `
+            <hr>
+            <div style="margin-left: 10px;">
+                <p>${officer.name}, ${officer.position}<br>
+                    ${officer.address_2
+                        ? `
+                                ${officer.address_2}<br>
+                                ${officer.city}, ${officer.state_code}<br>
+                                ${officer.zip}<br>
+                            `
+                        : ''
+                    }
+                    ${officer.email_1 ? `<a href="mailto:${officer.email_1}">${officer.email_1}</a><br>` : ''}
+                    ${officer.phone_1 ? `${officer.phone_1}` : ''}
+                </p>
+            </div>`;
     }
 
     generateMapString = (address) => {
@@ -184,5 +209,5 @@ $(document).ready(function () {
             `
         );
         fetchOfficers(id, renderOfficers);
-      })
+    })
 });
