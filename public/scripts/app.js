@@ -4,6 +4,10 @@ $(document).ready(function () {
     let allClubs = null;
     let dataObj = null;
 
+    let now = new Date();
+    let year = now.getFullYear();
+    $("#currentyear").text(year);
+
     $("#regionSelect").on("change", function() {
         const allClubsOption = "A";
 
@@ -22,11 +26,7 @@ $(document).ready(function () {
             }
         }
 
-        if (opt.value == allClubsOption) {
-            return fetchAllClubs(renderClubs)
-        } else {
-            return fetchClubsByRegion(opt.value, renderClubs);
-        }
+        return opt.value == allClubsOption ? fetchAllClubs(renderClubs) : fetchClubsByRegion(opt.value, renderClubs);
     });
 
     // fetch clubs from /api/club/all
@@ -118,10 +118,11 @@ $(document).ready(function () {
         return `
             <table class="table" style="margin-bottom: 0;">
             <tr>
+                <!-- MAKE RESPONSIVE -->
                 <td style="width: 25%;">${officer.name}</td>
                 <td style="width: 25%;">${officer.position}</td>
                 <td style="width: 25%;">${officer.phone_1 ? `${officer.phone_1}` : ''}</td>
-                <td style="width: 25%;">${officer.email_1 ? `${officer.email_1}` : ''}</td>
+                <td style="width: 25%;">${officer.email_1 ? `<a href="mailto:${officer.email_1}">${officer.email_1}</a>` : ''}</td>
             </tr>
             </table>
             ${officer.address_2
