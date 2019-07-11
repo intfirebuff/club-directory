@@ -10,20 +10,36 @@ const knex = require('knex')(knexConfig[ENV]);
 const morgan = require('morgan');
 const knexLogger = require('knex-logger');
 const cors = require('cors');
+const cookieSession = require('cookie-session');
+const flash = require('express-flash');
 
 app.use(express.static('public'));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(knexLogger(knex));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
+app.use(flash());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key 1'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 
 const DataHelpers = require('./lib/data-helpers.js')(knex);
 const apiRoutes = require('./routes/index');
+const userRoutes = require('./routes/users');
 app.use('/api', apiRoutes(DataHelpers));
+app.use('/users', userRoutes(DataHelpers));
 
 app.get('/', (req, res) => {
-  res.render('index');
+  let vars = {
+    user: req.session.user
+  };
+  return res.render('index', vars);
 });
 
 app.listen(PORT, () => {

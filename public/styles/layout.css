@@ -1,4 +1,15 @@
+#logoutBtn {
+    text-align: right;
+}
+
+@media only screen and (max-width: 768px) {
+    #logoutBtn {
+        text-align: left;
+    }
+} 
+
 #regionSelect {
+    margin-top: 20px;
     width: 150px;
 }
 
