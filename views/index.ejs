@@ -38,23 +38,63 @@
     </div>
 
     <main class="container">
-      <h1>ifba club directory</h1>
-      <select id="regionSelect" size="1">
-        <option value="">Choose a region</option>
-        <option value="A">All Regions</option>
-        <option value="1">Region 1</option>
-        <option value="3">Region 3</option>
-        <option value="4">Region 4</option>
-        <option value="5">Region 5</option>
-        <option value="6">Region 6</option>
-        <option value="7">Region 7</option>
-        <option value="9">Region 9</option>
-        <option value="10">Region 10</option>
-        <option value="11">Region 11</option>
-      </select>​
-
-      <div id="clubList">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+        <h1>ifba club directory</h1>
+        </div>
+        <% if (user) { %>
+          <div id="logoutBtn" class="col-md-4">
+          <form method="POST" action="/users/logout">
+            <button type="submit" value="logout">Logout</button>
+          </form>
+          </div>
+        <% } %>
       </div>
+
+
+      <% if (messages) { %>
+        <% for (key in messages) { %>
+          <div class="alert alert-<%= [key] %>">
+            <span><%= messages[key] %></span>
+          </div>
+        <% } %>
+      <% } %>
+
+      <% if (!user) { %>
+        <form action="/users/login" method="POST" >
+          <label for="username">Username</label>
+          <br>
+          <input type="text" id="username" name="username" autocomplete="username" placeholder="username"></input>
+          <br>
+          <br>
+          <label for="password">Password</label>
+          <br>
+          <input type="password" id="password" name="password" autocomplete="password" placeholder="password"></input>
+          <br>
+          <br>
+          <button type="submit" value="login">Login</button>
+        </form>
+      <% } %>
+
+      <% if (user) { %>
+        <select id="regionSelect" size="1">
+          <option value="">Choose a region</option>
+          <option value="A">All Regions</option>
+          <option value="1">Region 1</option>
+          <option value="3">Region 3</option>
+          <option value="4">Region 4</option>
+          <option value="5">Region 5</option>
+          <option value="6">Region 6</option>
+          <option value="7">Region 7</option>
+          <option value="9">Region 9</option>
+          <option value="10">Region 10</option>
+          <option value="11">Region 11</option>
+        </select>​
+
+        <div id="clubList">
+          <p style="margin-top: 15px;">Select a region from the dropdown to get started.</p>
+        </div>
+      <% } %>
     </main>
 
     <footer>
