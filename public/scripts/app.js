@@ -102,7 +102,7 @@ $(document).ready(function () {
                 <!-- <img class="card-img-top" src="https://via.placeholder.com/286x180"> -->
                 <p>
                     ${address_1 ? `${address_1}<br>` : ''}
-                    ${address_2}<br>
+                    ${address_2 ? `${address_2}<br>` : ''}
                     ${city}, ${state_code} ${zip}<br>
                     ${country}
                 </p>
@@ -125,20 +125,29 @@ $(document).ready(function () {
         return `
             <table class="table" style="margin-bottom: 0;">
             <tr>
-                <td style="width: 25%;">${officer.name}</td>
-                <td style="width: 25%;">${officer.position}</td>
-                <td style="width: 25%;">${officer.phone_1 ? `${officer.phone_1}` : ''}</td>
-                <td style="width: 25%;">${officer.email_1 ? `<a href="mailto:${officer.email_1}">${officer.email_1}</a>` : ''}</td>
+                <td width="15%">${officer.position}</td>
+                <td width="35%">
+                    <p>
+                    ${officer.name}
+                    ${officer.address_1 ? officer.address_1 : ''}
+                    ${officer.address_2 ? `
+                            <br>${officer.address_2}
+                            <br>${officer.city}, ${officer.state_code}
+                            <br>${officer.zip}`
+                        : ''}
+                    </p>
+                </td>
+                <td width="35%">
+                    ${officer.email_1 ? `<a href="mailto:${officer.email_1}">${officer.email_1}</a><br>` : ''}
+                    ${officer.email_2 ? `<a href="mailto:${officer.email_2}">${officer.email_2}</a><br>` : ''}
+                    ${officer.email_3 ? `<a href="mailto:${officer.email_3}">${officer.email_3}</a><br>` : ''}
+                    ${officer.phone_1 ? `${officer.phone_1}` : ''}
+                    ${officer.phone_2 ? `<br>${officer.phone_2}` : ''}
+                </td>
+                <td width="5%">${officer.facebook_url ? `<a href="${officer.facebook_url}" target="_blank"><i class="fab fa-facebook-square"></i></a>` : ''}</td>
+                <td width="5%"><i class="fas fa-edit officer-edit-button"></i></a></td>
             </tr>
-            </table>
-            ${officer.address_2
-                ? `<p style="margin-left: 10px; margin-top: -10px;">
-                        ${officer.address_2}<br>
-                        ${officer.city}, ${officer.state_code}<br>
-                        ${officer.zip}
-                    </p>`
-                   : ''
-            }`;
+            </table>`;
     }
 
     const generateMobileOfficerHtml = (officer) => {
@@ -161,8 +170,7 @@ $(document).ready(function () {
     }
 
     generateMapString = (address) => {
-        if (address.slice(0, 5) === 'P. O.') {
-            // return early if PO box
+        if (address.slice(0, 5) === 'P. O.' || address.startsWith('null')) {
             return '';
         }
 
@@ -179,13 +187,13 @@ $(document).ready(function () {
         let i = $(event.relatedTarget).data('index');
         let club = dataObj[i];
         let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
-        let mapString = `${address_2},+${city},+${state_code}+${zip}+${country}`;
-        $('.modal-title').text(name + ` (Region ${dataObj[i].region})`);
+        let mapString = `${address_2}, ${city}, ${state_code} ${zip} ${country}`;
+        $('.modal-title').text(name);
         $('.modal-body').html(`
             <div style="margin-left: 10px;">
                 <p>
                     ${address_1 ? `${address_1}<br>` : ''}
-                    ${address_2}<br>
+                    ${address_2 ? `${address_2}<br>` : ''}
                     ${city}, ${state_code} ${zip}<br>
                     ${country}
                 </p>
