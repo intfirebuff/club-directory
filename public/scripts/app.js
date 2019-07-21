@@ -64,6 +64,17 @@ $(document).ready(function () {
         })
     }
 
+    // fetch changelog
+    const fetchChangelog = (id, cb) => {
+        $.getJSON({
+            url: `/api/club/${id}/history`,
+            success: (response) => {
+                cb(response);
+            },
+            fail: handleError('fetchChangelog')
+        })
+    }
+
     const renderClubs = (data) => {
         dataObj = data;
         const clubs = data.map((club, i) => {
@@ -85,6 +96,25 @@ $(document).ready(function () {
             })
         }
         $(".modal-officers").prepend(officers.join(''));
+    }
+
+    const renderChangeLog = (data) => {
+        if (!data.length) {
+            return
+        };
+
+        let changes = [];
+        changes = data.map((change, i) => {
+            return `
+            <table class="table" style="margin-bottom: 0;">
+            <tr>
+                <td width="60%">${change.description}</td>
+                <td width="25%">${change.updated_by}</td>
+                <td width="15%">${change.created_at}</td>
+            </tr>
+            </table>`;
+        });
+        $(".modal-changelog").prepend(`<h6>Change History</h6>` + changes.join(''))
     }
 
     const handleError = (method) => {
@@ -214,8 +244,12 @@ $(document).ready(function () {
             <div class="modal-officers">
                 <!-- officer list is injected here -->
             </div>
+            <div class="modal-changelog">
+                <!-- changelog is injected here -->
+            </div>
             `
         );
         fetchOfficers(id, renderOfficers);
+        fetchChangelog(id, renderChangeLog);
     })
 });

@@ -39,6 +39,17 @@ module.exports = (DataHelpers) => {
     });
   }));
 
+  apiRoutes.get('/club/:id/history', authenticate, ((req, res) => {
+    let id = req.params.id;
+    DataHelpers.getChangelogByClubId(id, (err, changelog) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      } else {
+        return res.json(changelog);
+      }
+    });
+  }));
+
   apiRoutes.get('/officers/:id', authenticate, ((req, res) => {
     let id = req.params.id;
     DataHelpers.getOfficersByClubId(id, (err, officers) => {
