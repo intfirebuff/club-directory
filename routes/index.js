@@ -39,6 +39,10 @@ module.exports = (DataHelpers) => {
     });
   }));
 
+  apiRoutes.post('/club/edit', authenticate, ((req, res) => {
+    console.log(req.body)
+  }));
+
   apiRoutes.get('/officers/:id', authenticate, ((req, res) => {
     let id = req.params.id;
     DataHelpers.getOfficersByClubId(id, (err, officers) => {

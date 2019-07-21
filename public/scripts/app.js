@@ -189,6 +189,7 @@ $(document).ready(function () {
         let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
         let mapString = `${address_2}, ${city}, ${state_code} ${zip} ${country}`;
         $('.modal-title').text(name);
+        $('.modal-edit-button').html(`<i class="fas fa-edit" data-index="${i}" aria-label="Edit Club" role="button"></i>`)
         $('.modal-body').html(`
             <div style="margin-left: 10px;">
                 <p>
@@ -218,4 +219,42 @@ $(document).ready(function () {
         );
         fetchOfficers(id, renderOfficers);
     })
+});
+
+    $('.modal-edit-button').on('click', function (event) {
+        let i = event.target.dataset.index
+        let club = dataObj[i];
+        let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
+        $('.modal-title').text(`Editing: ${name}`);
+        $('.modal-edit-button').html('');
+        $('.modal-body').html(`
+            <div class="modal-edit-form">
+                <h5>Missing or incorrect info? Send us an update!</h5>
+                <form action="api/club/edit" method="POST" >
+                    Your Name<br>
+                    <input type="text" name="submitter_name" data-lpignore="true"></input>
+                    <br>
+                    <br>
+                    <p>
+                        Mailing Address (For Dues Notices)<br>
+                        <textarea rows="4" cols="30" name="address" placeholder="${address_1 ? `${address_1}\r\n` : ''}${address_2 ? `${address_2}\r\n` : ''}${city}, ${state_code} ${zip}\r\n${country}"></textarea>
+                    </p>
+                    Primary Email (For Dues Notices)<br><input type="text" name="email" placeholder="${email ? email : ''}" data-lpignore="true"></input><br><br>
+                    Website<br> <input type="text" id="website" name="website" placeholder="${website ? website : ''}" data-lpignore="true"></input><br><br>
+                    Facebook URL<br> <input type="text" class="facebook-input" name="facebook_url" placeholder="${facebook_url ? facebook_url : ''}" data-lpignore="true"></input><br><br>
+                    Twitter Account<br> <input type="text" name="twitter_handle" placeholder="${twitter_handle ? twitter_handle : ''}" data-lpignore="true"></input><br><br>
+                    Instagram Account<br> <input type="text" name="instagram_handle" placeholder="${instagram_handle ? instagram_handle : ''}" data-lpignore="true"></input>
+                    <br>
+                    <br>
+                    <button type="submit" class="btn btn-primary" value="submit">Submit Changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </form>
+            `
+        );
+        $('.modal-footer').hide()
+    });
+
+    $('#modal').on('hide.bs.modal', function (event) {
+        $('.modal-footer').show();
+    });
 });
