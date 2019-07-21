@@ -1,21 +1,45 @@
+.ifbaCrest {
+    float: left;
+    margin: 1rem 1rem 0 0;
+    max-width: 50px;
+    max-height: 50px;
+}
+
 #logoutBtn {
     text-align: right;
 }
 
 @media only screen and (max-width: 768px) {
     #logoutBtn {
-        text-align: left;
+        text-align: right;
     }
 } 
 
 .dropdownContainer {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 #regionSelect {
-    width: 150px;
+    width: 100%;
 }
+
+
+@media only screen and (max-width: 768px) {
+    #regionSelect {
+        margin-top: 15px;
+    }
+} 
+
+@media only screen and (min-width: 768px) {
+    .dropdownContainer {
+        flex-direction: row;
+    }
+
+    #regionSelect {
+        width: 150px;
+    }
+} 
 
 #regionVP {
     margin-left: 15px;
