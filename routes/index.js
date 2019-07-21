@@ -50,6 +50,16 @@ module.exports = (DataHelpers) => {
     });
   }));
 
+  apiRoutes.get('/ifba/officers', authenticate, ((req, res) => {
+    DataHelpers.getOurOfficers((err, officers) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      } else {
+        return res.json(officers);
+      }
+    });
+  }));
+
   apiRoutes.get('/region/:id', authenticate, ((req, res) => {
     let region = req.params.id;
     DataHelpers.getClubsByRegion(region, (err, clubs) => {

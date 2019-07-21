@@ -8,9 +8,17 @@
     }
 } 
 
+.dropdownContainer {
+    display: flex;
+    flex-direction: row;
+}
+
 #regionSelect {
-    margin-top: 20px;
     width: 150px;
+}
+
+#regionVP {
+    margin-left: 15px;
 }
 
 #clubList {
