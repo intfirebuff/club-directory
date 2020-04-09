@@ -14,7 +14,7 @@
   "author": "Ian Duke",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^4.0.1",
     "body-parser": "^1.18.3",
     "cookie-session": "^1.3.3",
     "cors": "^2.8.4",
