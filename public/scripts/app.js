@@ -169,25 +169,10 @@ $(document).ready(function () {
             </div>`;
     }
 
-    generateMapString = (address) => {
-        if (address.slice(0, 5) === 'P. O.' || address.startsWith('null')) {
-            return '';
-        }
-
-        return `
-            <iframe
-                width="450"
-                height="250"
-                frameborder="0" style="border:0"
-                src="https://www.google.com/maps/embed/v1/search?q=${address}" allowfullscreen>
-            </iframe>`;
-    }
-
     $('#modal').on('show.bs.modal', function (event) {
         let i = $(event.relatedTarget).data('index');
         let club = dataObj[i];
         let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
-        let mapString = `${address_2}, ${city}, ${state_code} ${zip} ${country}`;
         $('.modal-title').text(name);
         $('.modal-edit-button').html(`<i class="fas fa-edit" data-index="${i}" aria-label="Edit Club" role="button"></i>`)
         $('.modal-body').html(`
@@ -209,9 +194,6 @@ $(document).ready(function () {
                     ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
                 </div>
             </div>
-            <div class="mapbox">
-                ${generateMapString(mapString)}
-            </div>
             <div class="modal-officers">
                 <!-- officer list is injected here -->
             </div>
@@ -219,7 +201,6 @@ $(document).ready(function () {
         );
         fetchOfficers(id, renderOfficers);
     })
-});
 
     $('.modal-edit-button').on('click', function (event) {
         let i = event.target.dataset.index
@@ -231,7 +212,7 @@ $(document).ready(function () {
             <div class="modal-edit-form">
                 <h5>Missing or incorrect info? Send us an update!</h5>
                 <form action="api/club/edit" method="POST" >
-                    Your Name<br>
+                    Your Name (in case we have questions)<br>
                     <input type="text" name="submitter_name" data-lpignore="true"></input>
                     <br>
                     <br>
@@ -253,6 +234,16 @@ $(document).ready(function () {
         );
         $('.modal-footer').hide()
     });
+
+    $("#logout").on("click", () => {
+        $.post({
+          url: '/users/logout',
+          success: () => {
+            location.href = "/"
+          },
+          fail: handleError('logout')
+        })
+      });
 
     $('#modal').on('hide.bs.modal', function (event) {
         $('.modal-footer').show();
