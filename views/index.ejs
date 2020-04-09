@@ -24,6 +24,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="modalLabel"></h5>
+            <div class="modal-edit-button"></div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -38,19 +39,7 @@
     </div>
 
     <main class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-        <img class="ifbaCrest" src="images/crest.png"><h1>IFBA Club Directory</h1>
-        </div>
-        <% if (user) { %>
-          <div id="logoutBtn" class="col-md-4">
-          <form method="POST" action="/users/logout">
-            <button type="submit" value="logout">Logout</button>
-          </form>
-          </div>
-        <% } %>
-      </div>
-
+      <%- include('partials/_header') %>
 
       <% if (messages) { %>
         <% for (key in messages) { %>
@@ -61,19 +50,7 @@
       <% } %>
 
       <% if (!user) { %>
-        <form action="/users/login" method="POST" >
-          <label for="username">Username</label>
-          <br>
-          <input type="text" id="username" name="username" autocomplete="username" placeholder="username"></input>
-          <br>
-          <br>
-          <label for="password">Password</label>
-          <br>
-          <input type="password" id="password" name="password" autocomplete="password" placeholder="password"></input>
-          <br>
-          <br>
-          <button type="submit" value="login">Login</button>
-        </form>
+        <%- include('partials/_login') %>
       <% } %>
 
       <% if (user) { %>
@@ -102,11 +79,7 @@
       <% } %>
     </main>
 
-    <footer>
-      <p>&copy; IFBA <span id="currentyear"></span>. For Offical Use Only. <br />
-        Updates/corrections: <a href="mailto:treasurer@ifba.org">treasurer@ifba.org</a>
-      </p>
-    </footer>
+    <%- include('partials/_footer') %>
 
   </body>
 </html>

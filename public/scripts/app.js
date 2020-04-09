@@ -55,7 +55,7 @@ $(document).ready(function () {
         })
     }
 
-    // fetch iffba officers from /api/officers/ifba
+    // fetch ifba officers from /api/officers/ifba
     const fetchOurOfficers = () => {
         $.getJSON({
             url: '/api/ifba/officers',
@@ -198,26 +198,12 @@ $(document).ready(function () {
             </div>`;
     }
 
-    generateMapString = (address) => {
-        if (address.slice(0, 5) === 'P. O.' || address.startsWith('null')) {
-            return '';
-        }
-
-        return `
-            <iframe
-                width="450"
-                height="250"
-                frameborder="0" style="border:0"
-                src="https://www.google.com/maps/embed/v1/search?q=${address}" allowfullscreen>
-            </iframe>`;
-    }
-
     $('#modal').on('show.bs.modal', function (event) {
         let i = $(event.relatedTarget).data('index');
         let club = dataObj[i];
         let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
-        let mapString = `${address_2}, ${city}, ${state_code} ${zip} ${country}`;
         $('.modal-title').text(name);
+        $('.modal-edit-button').html(`<i class="fas fa-edit" data-index="${i}" aria-label="Edit Club" role="button"></i>`)
         $('.modal-body').html(`
             <div style="margin-left: 10px;">
                 <p>
@@ -237,9 +223,6 @@ $(document).ready(function () {
                     ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
                 </div>
             </div>
-            <div class="mapbox">
-                ${generateMapString(mapString)}
-            </div>
             <div class="modal-officers">
                 <!-- officer list is injected here -->
             </div>
@@ -247,6 +230,53 @@ $(document).ready(function () {
         );
         fetchClubOfficers(id, renderOfficers);
     })
+
+    $('.modal-edit-button').on('click', function (event) {
+        let i = event.target.dataset.index
+        let club = dataObj[i];
+        let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
+        $('.modal-title').text(`Editing: ${name}`);
+        $('.modal-edit-button').html('');
+        $('.modal-body').html(`
+            <div class="modal-edit-form">
+                <h5>Missing or incorrect info? Send us an update!</h5>
+                <form action="api/club/edit" method="POST" >
+                    Your Name (in case we have questions)<br>
+                    <input type="text" name="submitter_name" data-lpignore="true"></input>
+                    <br>
+                    <br>
+                    <p>
+                        Mailing Address (For Dues Notices)<br>
+                        <textarea rows="4" cols="30" name="address" placeholder="${address_1 ? `${address_1}\r\n` : ''}${address_2 ? `${address_2}\r\n` : ''}${city}, ${state_code} ${zip}\r\n${country}"></textarea>
+                    </p>
+                    Primary Email (For Dues Notices)<br><input type="text" name="email" placeholder="${email ? email : ''}" data-lpignore="true"></input><br><br>
+                    Website<br> <input type="text" id="website" name="website" placeholder="${website ? website : ''}" data-lpignore="true"></input><br><br>
+                    Facebook URL<br> <input type="text" class="facebook-input" name="facebook_url" placeholder="${facebook_url ? facebook_url : ''}" data-lpignore="true"></input><br><br>
+                    Twitter Account<br> <input type="text" name="twitter_handle" placeholder="${twitter_handle ? twitter_handle : ''}" data-lpignore="true"></input><br><br>
+                    Instagram Account<br> <input type="text" name="instagram_handle" placeholder="${instagram_handle ? instagram_handle : ''}" data-lpignore="true"></input>
+                    <br>
+                    <br>
+                    <button type="submit" class="btn btn-primary" value="submit">Submit Changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    </form>
+            `
+        );
+        $('.modal-footer').hide()
+    });
+
+    $("#logout").on("click", () => {
+        $.post({
+          url: '/users/logout',
+          success: () => {
+            location.href = "/"
+          },
+          fail: handleError('logout')
+        })
+      });
+
+    $('#modal').on('hide.bs.modal', function (event) {
+        $('.modal-footer').show();
+    });
 
     fetchOurOfficers();
 });
