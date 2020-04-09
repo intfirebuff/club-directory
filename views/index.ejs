@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>IFBA Officer Portal</title>
+    <title>IFBA Club Directory</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -54,19 +54,24 @@
       <% } %>
 
       <% if (user) { %>
-        <select id="regionSelect" size="1">
-          <option value="">Choose a region</option>
-          <option value="A">All Regions</option>
-          <option value="1">Region 1</option>
-          <option value="3">Region 3</option>
-          <option value="4">Region 4</option>
-          <option value="5">Region 5</option>
-          <option value="6">Region 6</option>
-          <option value="7">Region 7</option>
-          <option value="9">Region 9</option>
-          <option value="10">Region 10</option>
-          <option value="11">Region 11</option>
-        </select>​
+        <div class="dropdownContainer">
+          <span>
+            <select id="regionSelect" size="1">
+              <option value="">Choose a region</option>
+              <option value="A">All Regions</option>
+              <option value="1">Region 1</option>
+              <option value="3">Region 3</option>
+              <option value="5">Region 5</option>
+              <option value="6">Region 6</option>
+              <option value="7">Region 7</option>
+              <option value="9">Region 9</option>
+              <option value="10">Region 10</option>
+              <option value="11">Region 11</option>
+            </select>​
+          </span>
+
+          <span id="regionVP"><!-- placeholder for officer name --></span>
+        </div>
 
         <div id="clubList">
           <p style="margin-top: 15px;">Select a region from the dropdown to get started.</p>

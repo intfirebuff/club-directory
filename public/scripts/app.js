@@ -3,19 +3,21 @@ $(document).ready(function () {
     let allClubsFetched = false;
     let allClubs = null;
     let dataObj = null;
+    let ifbaOfficers = null;
 
     let now = new Date();
     let year = now.getFullYear();
     $("#currentyear").text(year);
+    const allClubsOption = "A";
 
     $("#regionSelect").on("change", function() {
-        const allClubsOption = "A";
-
         let opt = $(this).find('option:selected')[0]; 
         if (!opt.value) {
             // return early if placeholder text
             return;
         }
+
+        showRegionalVP(opt.value);
 
         if (allClubsFetched) {
             // check if data has been cached
@@ -53,14 +55,41 @@ $(document).ready(function () {
         })
     }
 
+    // fetch ifba officers from /api/officers/ifba
+    const fetchOurOfficers = () => {
+        $.getJSON({
+            url: '/api/ifba/officers',
+            success: (response) => {
+                ifbaOfficers = response;
+            },
+            fail: handleError('fetchClubOfficers')
+        })
+    }
+
+    showRegionalVP = (region) => {
+        if (region === allClubsOption) {
+            $("#regionVP").html('');
+            return;
+        }
+
+        let officer = ifbaOfficers.find(officer => officer.role.includes(region));
+        
+        if (officer === undefined) {
+            $("#regionVP").html(`<p>No Regional VP on file</p>`);
+        } else {
+            $("#regionVP").html(`<p>VP ${officer.name}</p>`);
+        }
+        return;
+    }
+
     // fetch club officers from /api/officers/:id
-    const fetchOfficers = (id, cb) => {
+    const fetchClubOfficers = (id, cb) => {
         $.getJSON({
             url: `/api/officers/${id}`,
             success: (response) => {
                 cb(response);
             },
-            fail: handleError('fetchOfficers')
+            fail: handleError('fetchClubOfficers')
         })
     }
 
@@ -116,7 +145,7 @@ $(document).ready(function () {
                     ${twitter_handle ? `<a href="https://twitter.com/${twitter_handle}" target="_blank"><i class="fab fa-twitter-square"></i></a>` : ''}
                     ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
                 </div>
-                <button type="button" class="btn btn-secondary" data-toggle="modal" data-index="${i}" data-target="#modal">More Info</button>
+                <!-- <button type="button" class="btn btn-secondary" data-toggle="modal" data-index="${i}" data-target="#modal">More Info</button> -->
             </div>
           </div>`;
     }
@@ -199,7 +228,7 @@ $(document).ready(function () {
             </div>
             `
         );
-        fetchOfficers(id, renderOfficers);
+        fetchClubOfficers(id, renderOfficers);
     })
 
     $('.modal-edit-button').on('click', function (event) {
@@ -248,4 +277,6 @@ $(document).ready(function () {
     $('#modal').on('hide.bs.modal', function (event) {
         $('.modal-footer').show();
     });
+
+    fetchOurOfficers();
 });
