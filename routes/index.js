@@ -1,5 +1,7 @@
 'use strict';
+require('dotenv').config();
 const express = require('express');
+const nodemailer = require('nodemailer');
 const apiRoutes = express.Router();
 
 module.exports = (DataHelpers) => {
@@ -18,29 +20,41 @@ module.exports = (DataHelpers) => {
     });
   }));
 
-  apiRoutes.get('/club/inactive', authenticate, ((req, res) => {
-    DataHelpers.getInactive((err, clubs) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      } else {
-        return res.json(clubs);
-      }
-    });
-  }));
-
-  apiRoutes.get('/club/:id', authenticate, ((req, res) => {
-    let id = req.params.id;
-    DataHelpers.getClubById(id, (err, clubs) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      } else {
-        return res.json(clubs);
-      }
-    });
-  }));
-
   apiRoutes.post('/club/edit', authenticate, ((req, res) => {
-    console.log(req.body)
+    let payload = req.body;
+    let textPlaceholderArr = [];
+
+    for (let [key, value] of Object.entries(payload)) {
+      if (value !== '') {
+        textPlaceholderArr.push(`<p><h3>${key}:</h3>${value}</p><br>`);
+      }
+    }
+
+    const transport = nodemailer.createTransport({
+      host: 'smtp.mailgun.org',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAILGUN_SMTP_LOGIN,
+        pass: process.env.MAILGUN_SMTP_PASSWORD
+      }
+    });
+
+    transport.sendMail({
+        from: process.env.MAILGUN_SMTP_LOGIN,
+        to: ['it@ifba.org'],
+        subject: `Club Directory Update Request - ${payload.club_name}`,
+        html: textPlaceholderArr.join('')
+      }, (err) => {
+
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        return res.sendStatus(200);
+      }
+    );
+
   }));
 
   apiRoutes.get('/officers/:id', authenticate, ((req, res) => {
@@ -55,7 +69,7 @@ module.exports = (DataHelpers) => {
   }));
 
   apiRoutes.get('/ifba/officers', authenticate, ((req, res) => {
-    DataHelpers.getOurOfficers((err, officers) => {
+    DataHelpers.getIfbaOfficers((err, officers) => {
       if (err) {
         return res.status(500).json({ error: err.message });
       } else {
@@ -75,16 +89,42 @@ module.exports = (DataHelpers) => {
     });
   }));
 
-  apiRoutes.get('/state/:id', authenticate, ((req, res) => {
-    let state = req.params.id;
-    DataHelpers.getClubsByState(state, (err, clubs) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      } else {
-        return res.json(clubs);
-      }
-    });
-  }));
+  /*
+    UNUSED ROUTES
+
+    apiRoutes.get('/state/:id', authenticate, ((req, res) => {
+      let state = req.params.id;
+      DataHelpers.getClubsByState(state, (err, clubs) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        } else {
+          return res.json(clubs);
+        }
+      });
+    }));
+
+    apiRoutes.get('/club/:id', authenticate, ((req, res) => {
+      let id = req.params.id;
+      DataHelpers.getClubById(id, (err, clubs) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        } else {
+          return res.json(clubs);
+        }
+      });
+    }));
+
+    apiRoutes.get('/club/inactive', authenticate, ((req, res) => {
+      DataHelpers.getInactive((err, clubs) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        } else {
+          return res.json(clubs);
+        }
+      });
+    }));
+
+  */
 
   return apiRoutes;
 

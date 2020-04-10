@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-    let allClubsFetched = false;
     let allClubs = null;
     let dataObj = null;
     let ifbaOfficers = null;
@@ -19,50 +18,32 @@ $(document).ready(function () {
 
         showRegionalVP(opt.value);
 
-        if (allClubsFetched) {
-            // check if data has been cached
-            if (opt.value == allClubsOption) {
-                return renderClubs(allClubs);
-            } else {
-                return renderClubs(allClubs.filter(club => club.region == opt.value));
-            }
+        if (opt.value == allClubsOption) {
+            return renderClubs(allClubs);
+        } else {
+            return renderClubs(allClubs.filter(club => club.region == opt.value));
         }
-
-        return opt.value == allClubsOption ? fetchAllClubs(renderClubs) : fetchClubsByRegion(opt.value, renderClubs);
     });
 
     // fetch clubs from /api/club/all
-    const fetchAllClubs = (cb) => {
+    const fetchAllClubs = () => {
         $.getJSON({
             url: '/api/club/all',
             success: (response) => {
                 allClubs = response;
-                allClubsFetched = true;
-                cb(response);
             },
-            fail: handleError('fetchAllClubs')
-        })
-    }
-
-    // fetch clubs from /api/region/:id
-    const fetchClubsByRegion = (region, cb) => {
-        $.getJSON({
-            url: `/api/region/${region}`,
-            success: (response) => {
-                cb(response);
-            },
-            fail: handleError('fetchClubsByRegion')
+            error: handleError('fetchAllClubs')
         })
     }
 
     // fetch ifba officers from /api/officers/ifba
-    const fetchOurOfficers = () => {
+    const fetchIfbaOfficers = () => {
         $.getJSON({
             url: '/api/ifba/officers',
             success: (response) => {
                 ifbaOfficers = response;
             },
-            fail: handleError('fetchClubOfficers')
+            error: handleError('fetchClubOfficers')
         })
     }
 
@@ -89,7 +70,7 @@ $(document).ready(function () {
             success: (response) => {
                 cb(response);
             },
-            fail: handleError('fetchClubOfficers')
+            error: handleError('fetchClubOfficers')
         })
     }
 
@@ -145,7 +126,7 @@ $(document).ready(function () {
                     ${twitter_handle ? `<a href="https://twitter.com/${twitter_handle}" target="_blank"><i class="fab fa-twitter-square"></i></a>` : ''}
                     ${instagram_handle ? `<a href="https://instagram.com/${instagram_handle}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
                 </div>
-                <!-- <button type="button" class="btn btn-secondary" data-toggle="modal" data-index="${i}" data-target="#modal">More Info</button> -->
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-index="${i}" data-target="#modal">More Info</button>
             </div>
           </div>`;
     }
@@ -174,7 +155,6 @@ $(document).ready(function () {
                     ${officer.phone_2 ? `<br>${officer.phone_2}` : ''}
                 </td>
                 <td width="5%">${officer.facebook_url ? `<a href="${officer.facebook_url}" target="_blank"><i class="fab fa-facebook-square"></i></a>` : ''}</td>
-                <td width="5%"><i class="fas fa-edit officer-edit-button"></i></a></td>
             </tr>
             </table>`;
     }
@@ -234,16 +214,17 @@ $(document).ready(function () {
     $('.modal-edit-button').on('click', function (event) {
         let i = event.target.dataset.index
         let club = dataObj[i];
-        let { id, name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
+        let { name, address_1, address_2, city, state_code, zip, country, website, email, facebook_url, twitter_handle, instagram_handle } = club;
         $('.modal-title').text(`Editing: ${name}`);
         $('.modal-edit-button').html('');
         $('.modal-body').html(`
             <div class="modal-edit-form">
                 <h5>Missing or incorrect info? Send us an update!</h5>
-                <form action="api/club/edit" method="POST" >
-                    Your Name (in case we have questions)<br>
-                    <input type="text" name="submitter_name" data-lpignore="true"></input>
+                <form id="editForm">
+                    Your Name (in case we have questions - REQUIRED)<br>
+                    <input type="text" name="submitter_name" required data-lpignore="true"></input>
                     <br>
+                    <input type="hidden" name="club_name" value="${name}"></input>
                     <br>
                     <p>
                         Mailing Address (For Dues Notices)<br>
@@ -258,10 +239,37 @@ $(document).ready(function () {
                     <br>
                     <button type="submit" class="btn btn-primary" value="submit">Submit Changes</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    </form>
-            `
-        );
+                </form>
+            </div>
+        `);
         $('.modal-footer').hide()
+    });
+
+    $('body').delegate('#editForm', 'submit', (event) => {
+        event.preventDefault();
+        $.post({
+            url: '/api/club/edit',
+            data: $('#editForm').serialize(),
+            success: () => {
+                $('.modal-body').html(`
+                    <div>
+                        <p>Your submission was successfully received!</p>
+                        <p>Thanks for your contribution</p>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Got it!</button>
+                `);
+            },
+            error: () => {
+                $('.modal-body').html(`
+                    <div>
+                        <p>An error occurred and your changes weren't sent 😢</p>
+                        <p>Please try again or email <a href="mailto:it@ifba.org">it@ifba.org</a></p>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Got it!</button>
+                `);
+            }
+          })
+        return false;
     });
 
     $("#logout").on("click", () => {
@@ -270,13 +278,14 @@ $(document).ready(function () {
           success: () => {
             location.href = "/"
           },
-          fail: handleError('logout')
+          error: handleError('logout')
         })
       });
 
-    $('#modal').on('hide.bs.modal', function (event) {
+    $('#modal').on('hide.bs.modal', () => {
         $('.modal-footer').show();
     });
 
-    fetchOurOfficers();
+    fetchIfbaOfficers();
+    fetchAllClubs();
 });
