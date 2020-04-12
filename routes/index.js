@@ -78,19 +78,19 @@ module.exports = (DataHelpers) => {
     });
   }));
 
-  apiRoutes.get('/region/:id', authenticate, ((req, res) => {
-    let region = req.params.id;
-    DataHelpers.getClubsByRegion(region, (err, clubs) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      } else {
-        return res.json(clubs);
-      }
-    });
-  }));
-
   /*
     UNUSED ROUTES
+
+    apiRoutes.get('/region/:id', authenticate, ((req, res) => {
+      let region = req.params.id;
+      DataHelpers.getClubsByRegion(region, (err, clubs) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        } else {
+          return res.json(clubs);
+        }
+      });
+    }));
 
     apiRoutes.get('/state/:id', authenticate, ((req, res) => {
       let state = req.params.id;

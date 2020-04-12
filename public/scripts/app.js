@@ -135,7 +135,7 @@ $(document).ready(function () {
         return `
             <table class="table" style="margin-bottom: 0;">
             <tr>
-                <td width="15%">${officer.position}</td>
+                <td width="15%">${officer.role}</td>
                 <td width="35%">
                     <p>
                     ${officer.name}
@@ -163,7 +163,7 @@ $(document).ready(function () {
         return `
             <hr>
             <div style="margin-left: 10px;">
-                <p>${officer.name}, ${officer.position}<br>
+                <p>${officer.name}, ${officer.role}<br>
                     ${officer.address_2
                         ? `
                                 ${officer.address_2}<br>
@@ -231,8 +231,8 @@ $(document).ready(function () {
                         <textarea rows="4" cols="30" name="address" placeholder="${address_1 ? `${address_1}\r\n` : ''}${address_2 ? `${address_2}\r\n` : ''}${city}, ${state_code} ${zip}\r\n${country}"></textarea>
                     </p>
                     Primary Email (For Dues Notices)<br><input type="text" name="email" placeholder="${email ? email : ''}" data-lpignore="true"></input><br><br>
-                    Website<br> <input type="text" id="website" name="website" placeholder="${website ? website : ''}" data-lpignore="true"></input><br><br>
-                    Facebook URL<br> <input type="text" class="facebook-input" name="facebook_url" placeholder="${facebook_url ? facebook_url : ''}" data-lpignore="true"></input><br><br>
+                    Website<br> <input type="text" id="website" class="full-width" name="website" placeholder="${website ? website : ''}" data-lpignore="true"></input><br><br>
+                    Facebook URL<br> <input type="text" class="full-width" name="facebook_url" placeholder="${facebook_url ? facebook_url : ''}" data-lpignore="true"></input><br><br>
                     Twitter Account<br> <input type="text" name="twitter_handle" placeholder="${twitter_handle ? twitter_handle : ''}" data-lpignore="true"></input><br><br>
                     Instagram Account<br> <input type="text" name="instagram_handle" placeholder="${instagram_handle ? instagram_handle : ''}" data-lpignore="true"></input>
                     <br>
