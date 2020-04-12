@@ -173,7 +173,10 @@ $(document).ready(function () {
                         : ''
                     }
                     ${officer.email_1 ? `<a href="mailto:${officer.email_1}">${officer.email_1}</a><br>` : ''}
-                    ${officer.phone_1 ? `${officer.phone_1}` : ''}
+                    ${officer.email_2 ? `<a href="mailto:${officer.email_2}">${officer.email_2}</a><br>` : ''}
+                    ${officer.email_3 ? `<a href="mailto:${officer.email_3}">${officer.email_3}</a><br>` : ''}
+                    ${officer.phone_1 ? `${officer.phone_1}<br>` : ''}
+                    ${officer.phone_2 ? `${officer.phone_2}` : ''}
                 </p>
             </div>`;
     }
