@@ -106,6 +106,10 @@
     .modal-edit-form input {
         width: 100%;
     }
+
+    textarea {
+        max-width: 80%;
+    }
 }
 
 .modal-edit-form .full-width {
