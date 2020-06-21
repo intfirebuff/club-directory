@@ -20,6 +20,16 @@ module.exports = (DataHelpers) => {
     });
   }));
 
+  apiRoutes.get('/club/public', ((req, res) => {
+    DataHelpers.getPublicClubs((err, clubs) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      } else {
+        return res.json(clubs);
+      }
+    });
+  }));
+
   apiRoutes.post('/club/edit', authenticate, ((req, res) => {
     let payload = req.body;
     let textPlaceholderArr = [];
