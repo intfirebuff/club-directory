@@ -6,7 +6,7 @@
   "scripts": {
     "test": "knex migrate:latest && mocha --exit ./test/index.test.js",
     "start": "node index.js",
-    "start-dev": "nodemon server/index.js",
+    "start:watch": "nodemon index.js",
     "local": "./node_modules/.bin/nodemon --ignore public/",
     "knex": "./node_modules/.bin/knex"
   },

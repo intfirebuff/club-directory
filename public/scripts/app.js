@@ -139,7 +139,7 @@ $(document).ready(function () {
                 <td width="35%">
                     <p>
                     ${officer.name}
-                    ${officer.address_1 ? officer.address_1 : ''}
+                    ${officer.address_1 ? `<br>${officer.address_1}` : ''}
                     ${officer.address_2 ? `
                             <br>${officer.address_2}
                             <br>${officer.city}, ${officer.state_code}
@@ -164,6 +164,7 @@ $(document).ready(function () {
             <hr>
             <div style="margin-left: 10px;">
                 <p>${officer.name}, ${officer.role}<br>
+                    ${officer.address_1 ? `${officer.address_1}<br>` : ''}
                     ${officer.address_2
                         ? `
                                 ${officer.address_2}<br>
