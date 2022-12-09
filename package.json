@@ -20,7 +20,7 @@
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
     "ejs": "^2.6.1",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "express-flash": "0.0.2",
     "knex": "^0.19.5",
     "knex-logger": "^0.1.0",
